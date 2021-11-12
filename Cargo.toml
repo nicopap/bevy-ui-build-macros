@@ -1,0 +1,11 @@
+[package]
+name = "bevy-ui-build-macros"
+authors = ["Nicola Papale"]
+description = "A collection of macros to speed up the process of defining UIs in bevy"
+license = "MIT OR Apache-2.0"
+readme = "Readme.md"
+keywords = ["bevy", "macros", "ui"]
+repository = "https://github.com/nicopap/bevy-ui-build-macros"
+homepage = "https://github.com/nicopap/bevy-ui-build-macros"
+version = "0.1.0"
+edition = "2021"
