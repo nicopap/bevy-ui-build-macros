@@ -10,6 +10,20 @@ macro_rules! unit {
     ($value:literal $val_unit:ident) => ( unit!(@with_value $val_unit $value));
 }
 
+/// Wrapper around `bevy::ui::Style`
+///
+/// ```rust,ignore
+/// style! {
+///     param1: something,
+///     param2: something_else,
+/// }
+/// // Is strictly equivalent to
+/// bevy::ui::Style {
+///     param1: something,
+///     param2: something_else,
+///     ..Default.default()
+/// }
+/// ```
 #[macro_export]
 macro_rules! style {
     (@default ($default:expr) $($field:ident : $content:expr),*) => (
@@ -97,9 +111,12 @@ macro_rules! rect {
 ///         // Leads to a compilation error if $entity doesn't have a `style`
 ///         // field
 ///         { flex_whatever: Whatever }
-///         // Additional component. Translates to $entity.insert(comp1).insert(comp2)
-///         [comp1, comp2] 
-///         // Children entities, may have {..}, [..] and (..) 
+///         // Additional components and bundles. Translates to
+///         // $entity.insert_bundle(bundle1).insert_bundle(bundle2).insert(comp1).insert(comp2)
+///         // If you don't care for bundles or comp, just leave the left or
+///         // right of the ; blank
+///         [bundle1, bundl2 ;comp1, comp2] 
+///         // Children entities, may have {..}, [..;..] and (..) 
 ///         (
 ///             entity[ButtonBundle](square),
 ///             id(my_id)
@@ -121,19 +138,19 @@ macro_rules! rect {
 ///     #[cmd(commands)]
 ///     vertical{size:size!(100 pct, 100 pct)}(
 ///         horizontal{justify_content: FlexStart, flex_basis: unit!(10 pct)}(
-///             tab_square[focus], tab_square[focus], tab_square[focus]
+///             tab_square[;focus], tab_square[;focus], tab_square[;focus]
 ///         ),
 ///         column_box(
-///             column[red](
+///             column[;red](
 ///                 vertical(select_square, select_square),
 ///                 horizontal{flex_wrap: Wrap}[gray](
-///                     square[focus], square[focus], square[focus], square[focus],
-///                     square[focus], square[focus], square[focus], square[focus],
-///                     square[focus], square[focus], square[focus], square[focus]
+///                     square[;focus], square[;focus], square[;focus], square[;focus],
+///                     square[;focus], square[;focus], square[;focus], square[;focus],
+///                     square[;focus], square[;focus], square[;focus], square[;focus]
 ///                 ),
 ///                 horizontal{flex_wrap: Wrap}[gray](
-///                     square[focus], square[focus], square[focus], square[focus],
-///                     square[focus], square[focus], square[focus], square[focus]
+///                     square[;focus], square[;focus], square[;focus], square[;focus],
+///                     square[;focus], square[;focus], square[;focus], square[;focus]
 ///                 )
 ///             )
 ///         )
@@ -205,23 +222,23 @@ macro_rules! build_ui {
     });
     (#[cmd($cmds:expr)] $preset:ident
         $( {$($styles:tt)*} )? // {..} style modifiers
-        $( [$($components:expr),*] )? // [..] components
+        $( [$($bundles:expr),* ; $($components:expr),*] )? // [..] components
         $( ( $( // (..) children
             $preset_chd:ident
                 $( {$($styles_chd:tt)*} )? // {..} children style modifiers
-                $( [$($components_chd:expr),*] )? // [..] children components
+                $( [$($components_chd:tt)*] )? // [..] children components
                 $( ( $($chd_chd:tt)* ) )? // Children children
         ),* ) )?
     ) => (
-        #[allow(unused_variables)]
         $cmds.spawn_bundle(build_ui!(@preset $preset $({$($styles)*})?).clone())
-            $($(.insert($components.clone()))*)?
+            $($(.insert_bundle($bundles.clone()))*
+            $(.insert($components.clone()))*)?
             $(.with_children(|cmds| {
                 $( build_ui!(
                     #[cmd(cmds)]
                     $preset_chd
                         $( { $($styles_chd)* } )?
-                        $( [ $($components_chd),* ] )?
+                        $( [ $($components_chd)* ] )?
                         $( ( $($chd_chd)* ) )?
                 ); )*
             }))?

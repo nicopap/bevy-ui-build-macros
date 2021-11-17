@@ -66,26 +66,26 @@ Rect {
 
 // build_ui! -- BUILD_UI --
 build_ui! {
-    #[cmd(commands)]
-    vertical{size:size!(100 pct, 100 pct)}(
-        horizontal{justify_content: FlexStart, flex_basis: unit!(10 pct)}(
-            tab_square[focus], tab_square[focus], tab_square[focus]
-        ),
-        column_box(
-            column[red](
-                vertical(select_square, select_square),
-                horizontal{flex_wrap: Wrap}[gray](
-                    square[focus], square[focus], square[focus], square[focus],
-                    square[focus], square[focus], square[focus], square[focus],
-                    square[focus], square[focus], square[focus], square[focus]
-                ),
-                horizontal{flex_wrap: Wrap}[gray](
-                    square[focus], square[focus], square[focus], square[focus],
-                    square[focus], square[focus], square[focus], square[focus]
-                )
-            )
-        )
-    )
+     #[cmd(commands)]
+     vertical{size:size!(100 pct, 100 pct)}(
+         horizontal{justify_content: FlexStart, flex_basis: unit!(10 pct)}(
+             tab_square[;focus], tab_square[;focus], tab_square[;focus]
+         ),
+         column_box(
+             column[;red](
+                 vertical(select_square, select_square),
+                 horizontal{flex_wrap: Wrap}[gray](
+                     square[;focus], square[;focus], square[;focus], square[;focus],
+                     square[;focus], square[;focus], square[;focus], square[;focus],
+                     square[;focus], square[;focus], square[;focus], square[;focus]
+                 ),
+                 horizontal{flex_wrap: Wrap}[gray](
+                     square[;focus], square[;focus], square[;focus], square[;focus],
+                     square[;focus], square[;focus], square[;focus], square[;focus]
+                 )
+             )
+         )
+     )
 }
 // Equivalent to
 commands.spawn_bundle(NodeBundle {
@@ -132,6 +132,16 @@ commands.spawn_bundle(NodeBundle {
       });
   });
 ```
+
+## Changelog
+
+* `0.2.0`
+  * Breaking: The `build_ui!` macro now uses [bundle;comp] instead of just a
+    list of components between square brackets. This makes it possible to
+    specify a list of components. This however requires having the semicolon
+    at the beginning of the square brackets if you only want to specify
+    additional components. `[;like, this]`
+
 
 ## License
 
