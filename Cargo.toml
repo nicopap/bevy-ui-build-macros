@@ -7,5 +7,5 @@ readme = "Readme.md"
 keywords = ["bevy", "macros", "ui"]
 repository = "https://github.com/nicopap/bevy-ui-build-macros"
 homepage = "https://github.com/nicopap/bevy-ui-build-macros"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"

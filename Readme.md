@@ -135,6 +135,10 @@ commands.spawn_bundle(NodeBundle {
 
 ## Changelog
 
+* `0.2.1`
+  * Added `undefined` and `auto` arguments to `unit!`, this also applies to
+    unit-style arguments to `size!` and `rect!`
+
 * `0.2.0`
   * Breaking: The `build_ui!` macro now uses [bundle;comp] instead of just a
     list of components between square brackets. This makes it possible to

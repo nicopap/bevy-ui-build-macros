@@ -3,10 +3,14 @@
 /// # Syntax
 /// * `unit!(num1 px)` ⇒ `Val::Px(num1 as f32)`
 /// * `unit!(num1 pct)` ⇒ `Val::Percent(num1 as f32)`
+/// * `unit!(auto)` ⇒ `Val::Auto`
+/// * `unit!(undefined)` ⇒ `Val::Undefined`
 #[macro_export]
 macro_rules! unit {
     (@with_value px $value:literal) => ( bevy::ui::Val::Px($value as f32));
     (@with_value pct $value:literal) => ( bevy::ui::Val::Percent($value as f32));
+    (auto) => ( bevy::ui::Val::Auto );
+    (undefined) => ( bevy::ui::Val::Undefined );
     ($value:literal $val_unit:ident) => ( unit!(@with_value $val_unit $value));
 }
 
@@ -40,8 +44,8 @@ macro_rules! style {
 /// * `size!(num1 val1, num2 val2)` ⇒ `Size::new(unit!(num1 val1), unit!(num2 val2))`
 #[macro_export]
 macro_rules! size {
-    ($x:literal $x_unit:ident, $y:literal $y_unit:ident) => (
-        bevy::math::Size::new(unit!($x $x_unit), unit!($y $y_unit))
+    ($x:tt $($x_unit:ident)?, $y:tt $($y_unit:ident)?) => (
+        bevy::math::Size::new(unit!($x $($x_unit)?), unit!($y $($y_unit)?))
     );
 }
 
@@ -70,26 +74,26 @@ macro_rules! size {
 /// ```
 #[macro_export]
 macro_rules! rect {
-    ($x:literal $x_unit:ident) => (
-        bevy::math::Rect::all(unit!($x $x_unit))
+    ($x:tt $($x_unit:ident)?) => (
+        bevy::math::Rect::all(unit!($x $($x_unit)?))
     );
     (
-        $left:literal $left_unit:ident, $top:literal $top_unit:ident,
-        $right:literal $right_unit:ident, $bottom:literal $bottom_unit:ident,
+        $left:tt $($left_unit:ident)?, $top:tt $($top_unit:ident)?,
+        $right:tt $($right_unit:ident)?, $bottom:tt $($bottom_unit:ident)?,
     ) => (
         bevy::math::Rect {
-            left: unit!($left $left_unit),
-            top: unit!($top $top_unit),
-            right: unit!($right $right_unit),
-            bottom: unit!($bottom $bottom_unit),
+            left: unit!($left $($left_unit)?),
+            top: unit!($top $($top_unit)?),
+            right: unit!($right $($right_unit)?),
+            bottom: unit!($bottom $($bottom_unit)?),
         }
     );
-    ($x:literal $x_unit:ident, $y:literal $y_unit:ident) => (
+    ($x:tt $($x_unit:ident)?, $y:tt $($y_unit:ident)?) => (
         bevy::math::Rect {
-            left: unit!($x $x_unit),
-            top: unit!($y $y_unit),
-            right: unit!($x $x_unit),
-            bottom: unit!($y $y_unit),
+            left: unit!($x $($x_unit)?),
+            top: unit!($y $($y_unit)?),
+            right: unit!($x $($x_unit)?),
+            bottom: unit!($y $($y_unit)?),
         }
     );
 }
