@@ -135,10 +135,15 @@ commands.spawn_bundle(NodeBundle {
 
 ## Changelog
 
+* `0.3.0`
+  * Now it's possible in `build_ui` to end the children list with a comma
+  * Added conditional children. Just wrap the children you want to only add
+    conditionally in a `if`, you can add as many `if` in a children list. This
+    also support `if else`. **Important**: you need to put your predicate between
+    parenthesis `if (predicate) { ... }` due to a limitation of rust macros.
 * `0.2.1`
   * Added `undefined` and `auto` arguments to `unit!`, this also applies to
     unit-style arguments to `size!` and `rect!`
-
 * `0.2.0`
   * Breaking: The `build_ui!` macro now uses [bundle;comp] instead of just a
     list of components between square brackets. This makes it possible to
@@ -151,8 +156,7 @@ commands.spawn_bundle(NodeBundle {
 
 This is weird. Since this code literally cannot produce distributable binary
 code, I don't think any of the mainstream license apply. On top of that, I
-usually license libraries I make with less than 100 lines of code under the
-WTFPL. But I'll be a good community player and dual license under MIT or Apache
-2.0 at your leisure.
+usually license small libraries under the WTFPL. But I'll be a good community
+player and dual license under MIT or Apache 2.0 at your leisure.
 
 Copyright © Nicola Papale, see LICENSE file for licensing details.

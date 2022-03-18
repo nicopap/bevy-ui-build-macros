@@ -101,7 +101,7 @@ macro_rules! rect {
 /// Define a bevy UI and spawns it using `cmd`
 ///
 /// # Syntax
-/// ```rust,ignore 
+/// ```rust,ignore
 /// use bevy::prelude::*;
 /// let commands: Commands;
 /// let my_id: Entity;
@@ -119,8 +119,8 @@ macro_rules! rect {
 ///         // $entity.insert_bundle(bundle1).insert_bundle(bundle2).insert(comp1).insert(comp2)
 ///         // If you don't care for bundles or comp, just leave the left or
 ///         // right of the ; blank
-///         [bundle1, bundl2 ;comp1, comp2] 
-///         // Children entities, may have {..}, [..;..] and (..) 
+///         [bundle1, bundl2 ;comp1, comp2]
+///         // Children entities, may have {..}, [..;..] and (..)
 ///         (
 ///             entity[ButtonBundle](square),
 ///             id(my_id)
@@ -130,7 +130,7 @@ macro_rules! rect {
 ///
 /// The `$entity` in the macro may be one of the following:
 /// * `id(Entity)`: inserts a pre-existing entity as child of containing entity
-/// * `$ident`: where `$ident` is the name of a local variable of type 
+/// * `$ident`: where `$ident` is the name of a local variable of type
 ///   `T: ComponentBundle`. Spawn the bundle as base to insert extra components
 ///   to. Useful to not repeat yourself.
 /// * `entity`: spawn an empty bundle as base to insert extra components to.
@@ -142,7 +142,7 @@ macro_rules! rect {
 ///     #[cmd(commands)]
 ///     vertical{size:size!(100 pct, 100 pct)}(
 ///         horizontal{justify_content: FlexStart, flex_basis: unit!(10 pct)}(
-///             tab_square[;focus], tab_square[;focus], tab_square[;focus]
+///             tab_square[;focus], tab_square[;focus], tab_square[;focus],
 ///         ),
 ///         column_box(
 ///             column[;red](
@@ -150,14 +150,14 @@ macro_rules! rect {
 ///                 horizontal{flex_wrap: Wrap}[gray](
 ///                     square[;focus], square[;focus], square[;focus], square[;focus],
 ///                     square[;focus], square[;focus], square[;focus], square[;focus],
-///                     square[;focus], square[;focus], square[;focus], square[;focus]
+///                     square[;focus], square[;focus], square[;focus], square[;focus],
 ///                 ),
 ///                 horizontal{flex_wrap: Wrap}[gray](
 ///                     square[;focus], square[;focus], square[;focus], square[;focus],
-///                     square[;focus], square[;focus], square[;focus], square[;focus]
-///                 )
-///             )
-///         )
+///                     square[;focus], square[;focus], square[;focus], square[;focus],
+///                 ),
+///             ),
+///         ),
 ///     )
 /// }
 /// // Basically becomes
@@ -215,6 +215,81 @@ macro_rules! build_ui {
             .. $node.clone()
         }
     );
+    // if-else terminal
+    (@child_list list: (if ($predicate:expr) { $( $if_true:tt )* } else { $( $if_false:tt )* } $(,)?),
+        cmds: $cmds:expr, prefix: ($( $prefix:tt )*),
+    ) => (
+        $( $prefix )*
+        if $predicate {
+            build_ui!(@child_list list: ($( $if_true )*), cmds: $cmds, prefix: (),);
+        } else {
+            build_ui!(@child_list list: ($( $if_false )*), cmds: $cmds, prefix: (),);
+        }
+    );
+    // if terminal
+    (@child_list list: (if ($predicate:expr) { $( $if_true:tt )* } $(,)?),
+        cmds: $cmds:expr, prefix: ($( $prefix:tt )*),
+    ) => (
+        $( $prefix )*
+        if $predicate {
+            build_ui!(@child_list list: ($( $if_true )*), cmds: $cmds, prefix: (),);
+        }
+    );
+    // if-else with tail
+    (@child_list list: (
+            if ($predicate:expr) { $( $if_true:tt )* } else { $( $if_false:tt )* }
+            , $( $tail:tt )+
+        ),
+        cmds: $cmds:expr, prefix: ($( $prefix:tt )*),
+    ) => (
+        build_ui! ( @child_list
+            list: ( $( $tail )+ ),
+            cmds: $cmds,
+            prefix: ($( $prefix )*
+                if $predicate {
+                    build_ui!(@child_list list: ($( $if_true )*), cmds: $cmds, prefix: (),);
+                } else {
+                    build_ui!(@child_list list: ($( $if_false )*), cmds: $cmds, prefix: (),);
+                }
+            ),
+        )
+    );
+    // if with tail
+    (@child_list list: (if ($predicate:expr) { $( $if_true:tt )* } , $( $tail:tt )+),
+        cmds: $cmds:expr, prefix: ($( $prefix:tt )*),
+    ) => (
+        build_ui! ( @child_list
+            list: ( $( $tail )+ ),
+            cmds: $cmds,
+            prefix: ($( $prefix )*
+                if $predicate {
+                    build_ui!(@child_list list: ($( $if_true )*), cmds: $cmds, prefix: (),);
+                }
+            ),
+        )
+    );
+    // just terminal
+    (@child_list list: ($preset:ident $( { $($syl:tt)* } )? $( [ $($bc:tt)* ] )? $( ( $( $c:tt )* ) )? $(,)?),
+        cmds: $cmds:expr, prefix: ($( $prefix:tt )*),
+    ) => (
+        $( $prefix )*
+        build_ui!{ #[cmd($cmds)] $preset $( { $($syl)* } )? $( [ $($bc)* ] )? $( ( $($c)* ) )? }
+    );
+    // just has a tail
+    (@child_list list: (
+            $preset:ident $( { $($syl:tt)* } )? $( [ $($bc:tt)* ] )? $( ( $( $c:tt )* ) )?
+            , $( $tail:tt )+
+        ),
+        cmds: $cmds:expr, prefix: ($( $prefix:tt )*),
+    ) => (
+        build_ui! ( @child_list
+            list: ( $( $tail )+ ),
+            cmds: $cmds,
+            prefix: ($( $prefix )*
+                build_ui!{ #[cmd($cmds)] $preset $( { $($syl)* } )? $( [ $($bc)* ] )? $( ( $($c)* ) )? };
+            ),
+        )
+    );
     (#[cmd($cmds:expr)] id ( $id:expr )) => ({
         use bevy::ecs::system::Insert;
         let parent = $cmds.parent_entity();
@@ -227,24 +302,17 @@ macro_rules! build_ui {
     (#[cmd($cmds:expr)] $preset:ident
         $( {$($styles:tt)*} )? // {..} style modifiers
         $( [$($bundles:expr),* ; $($components:expr),*] )? // [..] components
-        $( ( $( // (..) children
-            $preset_chd:ident
-                $( {$($styles_chd:tt)*} )? // {..} children style modifiers
-                $( [$($components_chd:tt)*] )? // [..] children components
-                $( ( $($chd_chd:tt)* ) )? // Children children
-        ),* ) )?
+        $( ( $( $children_list:tt )* ) )?
     ) => (
         $cmds.spawn_bundle(build_ui!(@preset $preset $({$($styles)*})?).clone())
             $($(.insert_bundle($bundles.clone()))*
             $(.insert($components.clone()))*)?
             $(.with_children(|cmds| {
-                $( build_ui!(
-                    #[cmd(cmds)]
-                    $preset_chd
-                        $( { $($styles_chd)* } )?
-                        $( [ $($components_chd)* ] )?
-                        $( ( $($chd_chd)* ) )?
-                ); )*
+                build_ui!(@child_list
+                    list: ( $( $children_list )* ),
+                    cmds: cmds,
+                    prefix: (),
+                );
             }))?
     );
 }
