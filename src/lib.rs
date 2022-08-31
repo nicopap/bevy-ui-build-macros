@@ -38,18 +38,18 @@ macro_rules! style {
     );
 }
 
-/// Wrapper around `bevy::math::Size::new`
+/// Wrapper around `bevy::ui::Size::new`
 ///
 /// # Syntax
 /// * `size!(num1 val1, num2 val2)` ⇒ `Size::new(unit!(num1 val1), unit!(num2 val2))`
 #[macro_export]
 macro_rules! size {
     ($x:tt $($x_unit:ident)?, $y:tt $($y_unit:ident)?) => (
-        bevy::math::Size::new(unit!($x $($x_unit)?), unit!($y $($y_unit)?))
+        bevy::ui::Size::new(unit!($x $($x_unit)?), unit!($y $($y_unit)?))
     );
 }
 
-/// Define a `bevy::math::Rect` similarly to how you would define it in CSS.
+/// Define a `bevy::ui::UiRect` similarly to how you would define it in CSS.
 ///
 /// # Syntax
 /// ```rust,ignore
@@ -75,13 +75,13 @@ macro_rules! size {
 #[macro_export]
 macro_rules! rect {
     ($x:tt $($x_unit:ident)?) => (
-        bevy::math::Rect::all(unit!($x $($x_unit)?))
+        bevy::ui::UiRect::all(unit!($x $($x_unit)?))
     );
     (
         $left:tt $($left_unit:ident)?, $top:tt $($top_unit:ident)?,
         $right:tt $($right_unit:ident)?, $bottom:tt $($bottom_unit:ident)?,
     ) => (
-        bevy::math::Rect {
+        bevy::ui::UiRect {
             left: unit!($left $($left_unit)?),
             top: unit!($top $($top_unit)?),
             right: unit!($right $($right_unit)?),
@@ -89,7 +89,7 @@ macro_rules! rect {
         }
     );
     ($x:tt $($x_unit:ident)?, $y:tt $($y_unit:ident)?) => (
-        bevy::math::Rect {
+        bevy::ui::UiRect {
             left: unit!($x $($x_unit)?),
             top: unit!($y $($y_unit)?),
             right: unit!($x $($x_unit)?),
@@ -293,9 +293,9 @@ macro_rules! build_ui {
     (#[cmd($cmds:expr)] id ( $id:expr )) => ({
         use bevy::ecs::system::Insert;
         let parent = $cmds.parent_entity();
-        let insert = bevy::ecs::system::Insert {
-            entity: $id,
-            component: bevy::prelude::Parent(parent),
+        let insert = bevy::hierarchy::AddChild {
+            child: $id,
+            parent,
         };
         $cmds.add_command(insert);
     });

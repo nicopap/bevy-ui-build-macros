@@ -135,6 +135,8 @@ commands.spawn_bundle(NodeBundle {
 
 ## Changelog
 
+* `0.4.0`: Bevy 0.8 support, use `bevy::ui::Size` and `bevy::ui::UiRect`
+  over `math::Size` and `math::Rect`
 * `0.3.0`
   * Now it's possible in `build_ui` to end the children list with a comma
   * Added conditional children. Just wrap the children you want to only add
