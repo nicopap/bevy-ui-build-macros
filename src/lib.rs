@@ -210,7 +210,7 @@ macro_rules! build_ui {
     (@preset entity) => (());
     (@preset $anything_else:ident) => ($anything_else);
     (@preset $node:ident {$($styles:tt)*}) => (
-        bevy::ui::entity::NodeBundle {
+        bevy::ui::node_bundles::NodeBundle {
             style: style!(@default ($node.style.clone()) $($styles)*),
             .. $node.clone()
         }
