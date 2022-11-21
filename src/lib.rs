@@ -210,7 +210,7 @@ macro_rules! build_ui {
     (@preset entity) => (());
     (@preset $anything_else:ident) => ($anything_else);
     (@preset $node:ident {$($styles:tt)*}) => (
-        bevy::ui::entity::NodeBundle {
+        bevy::ui::node_bundles::NodeBundle {
             style: style!(@default ($node.style.clone()) $($styles)*),
             .. $node.clone()
         }
@@ -304,8 +304,8 @@ macro_rules! build_ui {
         $( [$($bundles:expr),* ; $($components:expr),*] )? // [..] components
         $( ( $( $children_list:tt )* ) )?
     ) => (
-        $cmds.spawn_bundle(build_ui!(@preset $preset $({$($styles)*})?).clone())
-            $($(.insert_bundle($bundles.clone()))*
+        $cmds.spawn(build_ui!(@preset $preset $({$($styles)*})?).clone())
+            $($(.insert($bundles.clone()))*
             $(.insert($components.clone()))*)?
             $(.with_children(|cmds| {
                 build_ui!(@child_list
