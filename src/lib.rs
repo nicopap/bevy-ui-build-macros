@@ -304,8 +304,8 @@ macro_rules! build_ui {
         $( [$($bundles:expr),* ; $($components:expr),*] )? // [..] components
         $( ( $( $children_list:tt )* ) )?
     ) => (
-        $cmds.spawn_bundle(build_ui!(@preset $preset $({$($styles)*})?).clone())
-            $($(.insert_bundle($bundles.clone()))*
+        $cmds.spawn(build_ui!(@preset $preset $({$($styles)*})?).clone())
+            $($(.insert($bundles.clone()))*
             $(.insert($components.clone()))*)?
             $(.with_children(|cmds| {
                 build_ui!(@child_list
