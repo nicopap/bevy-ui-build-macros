@@ -79,7 +79,7 @@ macro_rules! rect {
     );
     (
         $left:tt $($left_unit:ident)?, $top:tt $($top_unit:ident)?,
-        $right:tt $($right_unit:ident)?, $bottom:tt $($bottom_unit:ident)?
+        $right:tt $($right_unit:ident)?, $bottom:tt $($bottom_unit:ident)? $(,)?
     ) => (
         bevy::ui::UiRect {
             left: unit!($left $($left_unit)?),
