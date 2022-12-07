@@ -135,6 +135,8 @@ commands.spawn_bundle(NodeBundle {
 
 ## Changelog
 
+* `0.6.0`: (non-breaking) Make the terminal comma in the four argument `rect!`
+  variant optional.
 * `0.5.0`: Bevy 0.9 support
 * `0.4.0`: Bevy 0.8 support, use `bevy::ui::Size` and `bevy::ui::UiRect`
   over `math::Size` and `math::Rect`
