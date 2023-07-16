@@ -1,5 +1,16 @@
 # Bevy UI Build macros
 
+| **❗ This crate is deperacted, do not use it ❗** |
+|---------------------------------------------------|
+
+This crate won't receive any update and won't be compatible with newer versions
+of bevy.
+
+Prefer either:
+
+- [`bevy_ui_dsl`](https://lib.rs/crates/bevy-ui-dsl)
+- [`cuicui_dsl`](https://lib.rs/crates/cuicui_dsl)
+
 A collection of macros to speed up the process of defining UIs in bevy.
 
 ## Bevy version
@@ -135,6 +146,7 @@ commands.spawn_bundle(NodeBundle {
 
 ## Changelog
 
+* `0.6.1`: (non-breaking) Add deprecation banner.
 * `0.6.0`: (non-breaking) Make the terminal comma in the four argument `rect!`
   variant optional.
 * `0.5.0`: Bevy 0.9 support
